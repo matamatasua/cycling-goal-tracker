@@ -39,6 +39,7 @@ function App() {
         <div className="header-content">
           <h1>🚴 Cycling Goal Tracker</h1>
           <p>5,000 miles in 2026</p>
+          <p className="timestamp">{new Date().toLocaleString()}</p>
         </div>
       </header>
 
