@@ -1,0 +1,79 @@
+.weekly-plan {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.weekly-plan h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.25rem;
+  color: #e2e8f0;
+}
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.plan-day {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.day-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.plan-miles {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 0.5rem;
+  color: #e2e8f0;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.plan-miles:focus {
+  outline: none;
+  border-color: #06b6d4;
+  background: #1a1f2e;
+}
+
+.plan-type {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 0.5rem;
+  color: #e2e8f0;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.plan-type:focus {
+  outline: none;
+  border-color: #06b6d4;
+}
+
+.plan-type.type-road {
+  border-color: #ef4444;
+}
+
+.plan-type.type-mtb {
+  border-color: #f59e0b;
+}
+
+.plan-type.type-virtual {
+  border-color: #06b6d4;
+}
+
+.plan-type.type-rest {
+  border-color: #64748b;
+}

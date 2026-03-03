@@ -1,0 +1,120 @@
+.goal-progress {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.progress-visual {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.progress-ring {
+  width: 180px;
+  height: 180px;
+}
+
+.progress-ring-bg {
+  fill: none;
+  stroke: #334155;
+  stroke-width: 4;
+}
+
+.progress-ring-fill {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50px 50px;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.progress-ring-fill.status-ahead {
+  stroke: #10b981;
+}
+
+.progress-ring-fill.status-behind {
+  stroke: #f97316;
+}
+
+.progress-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.progress-text .miles {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #e2e8f0;
+}
+
+.progress-text .goal-text {
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+.progress-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.status-badge {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.status-badge.status-ahead {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid #10b981;
+}
+
+.status-badge.status-behind {
+  background: rgba(249, 115, 22, 0.1);
+  color: #f97316;
+  border: 1px solid #f97316;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  color: #cbd5e1;
+}
+
+.detail-row .value {
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.detail-row .value.positive {
+  color: #10b981;
+}
+
+.detail-row .value.negative {
+  color: #f97316;
+}
+
+@media (max-width: 640px) {
+  .progress-visual {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .progress-text .miles {
+    font-size: 2.25rem;
+  }
+
+  .progress-ring {
+    width: 120px;
+    height: 120px;
+  }
+}
