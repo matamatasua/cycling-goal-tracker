@@ -23,7 +23,7 @@ export function mapStravaActivityToOurs(stravaActivity) {
     id: stravaActivity.id,
     date: stravaActivity.start_date.split('T')[0], // ISO date format
     miles: Math.round(stravaActivity.distance * metersToMiles * 10) / 10, // round to 0.1
-    type: mapActivityType(stravaActivity.type),
+    type: mapActivityType(stravaActivity.sport_type), // Use sport_type for specific activity types
     notes: stravaActivity.name || '',
     source: 'strava', // Track that this came from Strava
   }
