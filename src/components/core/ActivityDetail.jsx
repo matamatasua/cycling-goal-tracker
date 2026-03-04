@@ -40,7 +40,7 @@ export default function ActivityDetail({ activity, onClose }) {
         </div>
 
         <div className="modal-badges">
-          <span className="modal-type-badge" style={{ background: `var(--color-${activity.type || 'road'})` }}>
+          <span className="modal-type-badge" style={{ background: `var(--color-${activity.type || 'road'})`, color: `var(--color-${activity.type || 'road'}-text)` }}>
             {(activity.type || 'road').toUpperCase()}
           </span>
           <span className="modal-source-badge">

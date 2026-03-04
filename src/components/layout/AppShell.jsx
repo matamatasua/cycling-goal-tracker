@@ -3,9 +3,11 @@ import Header from './Header'
 import BottomTabBar from './BottomTabBar'
 import StatsRing from '../core/StatsRing'
 import DriftVector from '../core/DriftVector'
+import MonthlyChart from '../core/MonthlyChart'
 import ActivityFeed from '../core/ActivityFeed'
 import ActivityDetail from '../core/ActivityDetail'
 import WeeklyPlan from '../plan/WeeklyPlan'
+import WeekActual from '../plan/WeekActual'
 import { useAuth } from '../../contexts/AuthContext'
 import { useData } from '../../contexts/DataContext'
 
@@ -36,7 +38,7 @@ export default function AppShell() {
               <div className="shell-hero-hex">&#x2B22;</div>
               <p className="shell-hero-text">
                 Sign in with Google to activate your<br />
-                <span className="accent-cyan">CGT-26 Cycling Intelligence</span>
+                <span className="accent-primary">CGT-26 Cycling Intelligence</span>
               </p>
               <p className="shell-hero-goal data-text">TARGET: 5,000 MILES / 2026</p>
             </div>
@@ -72,11 +74,17 @@ export default function AppShell() {
               </div>
               <DriftVector />
             </div>
+            <div className="drawer-section glass-panel drawer-section-gap">
+              <MonthlyChart />
+            </div>
           </div>
           <div className={`drawer ${activeDrawer === 'plan' ? 'drawer-active' : ''}`}>
             <div className="drawer-section">
               <h2 className="section-title">WEEKLY PLAN</h2>
               <WeeklyPlan />
+            </div>
+            <div className="drawer-section glass-panel drawer-section-gap">
+              <WeekActual />
             </div>
           </div>
           <div className={`drawer ${activeDrawer === 'log' ? 'drawer-active' : ''}`}>

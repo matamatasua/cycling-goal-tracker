@@ -100,7 +100,7 @@ export default function DriftVector() {
   return (
     <div className="drift-container">
       <div className="drift-header">
-        <span className="drift-indicator data-text" style={{ color: driftPercent >= 0 ? 'var(--accent-cyan)' : 'var(--accent-amber)' }}>
+        <span className="drift-indicator data-text" style={{ color: driftPercent >= 0 ? 'var(--accent-primary)' : 'var(--accent-orange)' }}>
           {driftPercent >= 0 ? '+' : ''}{driftPercent.toFixed(1)}% DRIFT
         </span>
       </div>
@@ -125,7 +125,7 @@ export default function DriftVector() {
             />
             <Tooltip
               contentStyle={{
-                background: 'rgba(0,0,0,0.9)',
+                background: 'var(--tooltip-bg)',
                 border: '1px solid var(--border-medium)',
                 borderRadius: 'var(--radius-sm)',
                 fontFamily: 'var(--font-mono)',
@@ -138,7 +138,7 @@ export default function DriftVector() {
             <Line
               type="monotone"
               dataKey="target"
-              stroke="#FFFFFF"
+              stroke="var(--target-line)"
               strokeWidth={1.5}
               dot={false}
               name="Target"
@@ -149,7 +149,7 @@ export default function DriftVector() {
             <Line
               type="monotone"
               dataKey="trend"
-              stroke="var(--accent-amber)"
+              stroke="var(--accent-orange)"
               strokeWidth={1.5}
               strokeDasharray="4 4"
               dot={false}
@@ -185,11 +185,11 @@ export default function DriftVector() {
 
       <div className="drift-legend">
         <span className="drift-legend-item">
-          <span className="drift-legend-line" style={{ background: '#FFFFFF' }} />
+          <span className="drift-legend-line" style={{ background: 'var(--target-line)' }} />
           TARGET
         </span>
         <span className="drift-legend-item">
-          <span className="drift-legend-line drift-legend-dotted" style={{ borderColor: 'var(--accent-amber)' }} />
+          <span className="drift-legend-line drift-legend-dotted" style={{ borderColor: 'var(--accent-orange)' }} />
           TREND
         </span>
         <span className="drift-legend-item">

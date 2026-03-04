@@ -169,7 +169,7 @@ export function getRecoveryColor(activities, goal, weeklyPlan) {
 
   // Already at or above goal
   if (totalMiles >= goal || daysRemaining <= 0) {
-    return { pScore, recoveryFactor: 0, accent: 'var(--accent-cyan)', glow: 'var(--accent-cyan-glow)', haloClass: 'hex-halo-high' }
+    return { pScore, recoveryFactor: 0, accent: 'var(--accent-green)', glow: 'var(--accent-green-glow)', haloClass: 'hex-halo-high' }
   }
 
   const requiredDailyPace = (goal - totalMiles) / daysRemaining
@@ -178,10 +178,10 @@ export function getRecoveryColor(activities, goal, weeklyPlan) {
   const recoveryFactor = requiredDailyPace / referencePace
 
   if (recoveryFactor <= 1.0) {
-    return { pScore, recoveryFactor, accent: 'var(--accent-cyan)', glow: 'var(--accent-cyan-glow)', haloClass: 'hex-halo-high' }
+    return { pScore, recoveryFactor, accent: 'var(--accent-green)', glow: 'var(--accent-green-glow)', haloClass: 'hex-halo-high' }
   }
   if (recoveryFactor <= 1.5) {
-    return { pScore, recoveryFactor, accent: 'var(--accent-amber)', glow: 'var(--accent-amber-glow)', haloClass: 'hex-halo-mid' }
+    return { pScore, recoveryFactor, accent: 'var(--accent-orange)', glow: 'var(--accent-orange-glow)', haloClass: 'hex-halo-mid' }
   }
   return { pScore, recoveryFactor, accent: 'var(--accent-red)', glow: 'var(--accent-red-glow)', haloClass: 'hex-halo-low' }
 }
