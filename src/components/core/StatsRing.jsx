@@ -128,6 +128,16 @@ export default function StatsRing() {
           </span>
         </div>
       )}
+
+      <div className="mantra">
+        <div className="mantra-text">
+          <span className="mantra-line1">50 YEARS STRONG.</span>
+          <span className="mantra-line2">TIME TO PROVE IT!</span>
+        </div>
+        <div className="mantra-tooltip">
+          Age 50 &middot; Coach since 2012 &middot; Peak fitness &mdash; this year.
+        </div>
+      </div>
     </div>
   )
 }
