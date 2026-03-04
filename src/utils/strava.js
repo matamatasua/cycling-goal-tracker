@@ -81,7 +81,7 @@ export async function fetchActivitiesFromStrava(accessToken, sinceDateString = n
     after = Math.floor(new Date(sinceDateString).getTime() / 1000)
   } else {
     // 2026-01-01 as Unix timestamp
-    after = 1735689600
+    after = 1767225600
   }
 
   try {
