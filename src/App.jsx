@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+// Strava OAuth production deployment fix
 import GoalProgress from './components/GoalProgress'
 import PaceChart from './components/PaceChart'
 import WeeklyPlan from './components/WeeklyPlan'
