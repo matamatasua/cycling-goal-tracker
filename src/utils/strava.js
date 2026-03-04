@@ -19,13 +19,22 @@ function mapActivityType(stravaType) {
 // Convert Strava activity to our data model
 export function mapStravaActivityToOurs(stravaActivity) {
   const metersToMiles = 0.000621371
+  const mpsToMph = 2.23694
+  const metersToFeet = 3.28084
   return {
     id: stravaActivity.id,
-    date: stravaActivity.start_date.split('T')[0], // ISO date format
-    miles: Math.round(stravaActivity.distance * metersToMiles * 10) / 10, // round to 0.1
-    type: mapActivityType(stravaActivity.sport_type), // Use sport_type for specific activity types
+    date: stravaActivity.start_date.split('T')[0],
+    miles: Math.round(stravaActivity.distance * metersToMiles * 10) / 10,
+    type: mapActivityType(stravaActivity.sport_type),
     notes: stravaActivity.name || '',
-    source: 'strava', // Track that this came from Strava
+    source: 'strava',
+    moving_time: stravaActivity.moving_time || null,
+    elevation_gain: stravaActivity.total_elevation_gain ? Math.round(stravaActivity.total_elevation_gain * metersToFeet) : null,
+    avg_speed: stravaActivity.average_speed ? Math.round(stravaActivity.average_speed * mpsToMph * 10) / 10 : null,
+    max_speed: stravaActivity.max_speed ? Math.round(stravaActivity.max_speed * mpsToMph * 10) / 10 : null,
+    avg_heartrate: stravaActivity.average_heartrate ? Math.round(stravaActivity.average_heartrate) : null,
+    max_heartrate: stravaActivity.max_heartrate ? Math.round(stravaActivity.max_heartrate) : null,
+    suffer_score: stravaActivity.suffer_score || null,
   }
 }
 
@@ -36,6 +45,7 @@ export function getAuthorizationUrl(clientId, redirectUri) {
     redirect_uri: redirectUri,
     response_type: 'code',
     scope: 'activity:read_all',
+    state: 'strava',
   })
   return `${STRAVA_AUTH_URL}?${params.toString()}`
 }
