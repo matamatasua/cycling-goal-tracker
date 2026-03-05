@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
-import { getAuthorizationUrl, exchangeCodeForToken } from '../utils/strava'
+import { getAuthorizationUrl, exchangeCodeForToken, refreshAccessToken } from '../utils/strava'
 
 const AuthContext = createContext(null)
 
@@ -90,6 +90,8 @@ export function AuthProvider({ children }) {
           user_id: session.user.id,
           strava_athlete_id: result.athlete.id,
           strava_access_token: result.accessToken,
+          strava_refresh_token: result.refreshToken,
+          strava_token_expires_at: result.expiresAt,
           athlete_name: result.athlete.name,
           athlete_profile_url: result.athlete.profileUrl,
         }, { onConflict: 'user_id' })
@@ -104,6 +106,31 @@ export function AuthProvider({ children }) {
       setLoading(false)
     }
   }
+
+  const refreshStravaToken = useCallback(async () => {
+    if (!session || !stravaInfo?.strava_refresh_token) return null
+
+    const result = await refreshAccessToken(
+      stravaInfo.strava_refresh_token,
+      import.meta.env.VITE_STRAVA_CLIENT_ID,
+      import.meta.env.VITE_STRAVA_CLIENT_SECRET
+    )
+
+    const { data, error } = await supabase
+      .from('user_settings')
+      .update({
+        strava_access_token: result.accessToken,
+        strava_refresh_token: result.refreshToken,
+        strava_token_expires_at: result.expiresAt,
+      })
+      .eq('user_id', session.user.id)
+      .select()
+      .single()
+
+    if (error) throw error
+    setStravaInfo(data)
+    return result.accessToken
+  }, [session, stravaInfo])
 
   const signInWithGoogle = useCallback(async () => {
     await supabase.auth.signInWithOAuth({
@@ -131,6 +158,7 @@ export function AuthProvider({ children }) {
   const stravaConnected = !!stravaInfo?.strava_access_token
   const userId = session?.user?.id || null
   const accessToken = stravaInfo?.strava_access_token || null
+  const tokenExpiresAt = stravaInfo?.strava_token_expires_at || null
 
   // Prefer Strava athlete name, fall back to Google display name
   const athleteName = stravaInfo?.athlete_name
@@ -146,6 +174,8 @@ export function AuthProvider({ children }) {
       athleteName,
       userId,
       accessToken,
+      tokenExpiresAt,
+      refreshStravaToken,
       signInWithGoogle,
       connectStrava,
       signOut,

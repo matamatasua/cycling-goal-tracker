@@ -75,11 +75,38 @@ export async function exchangeCodeForToken(code, clientId, clientSecret) {
   const data = await response.json()
   return {
     accessToken: data.access_token,
+    refreshToken: data.refresh_token,
+    expiresAt: data.expires_at,
     athlete: {
       id: data.athlete.id,
       name: data.athlete.firstname + ' ' + data.athlete.lastname,
       profileUrl: data.athlete.profile,
     },
+  }
+}
+
+// Refresh an expired access token
+export async function refreshAccessToken(refreshToken, clientId, clientSecret) {
+  const response = await fetch(STRAVA_TOKEN_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to refresh Strava token')
+  }
+
+  const data = await response.json()
+  return {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token,
+    expiresAt: data.expires_at,
   }
 }
 

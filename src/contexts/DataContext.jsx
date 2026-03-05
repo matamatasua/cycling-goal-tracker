@@ -15,7 +15,7 @@ export function useData() {
 const DAY_MAP = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
 export function DataProvider({ children }) {
-  const { userId, accessToken, isAuthenticated, stravaConnected } = useAuth()
+  const { userId, accessToken, tokenExpiresAt, refreshStravaToken, isAuthenticated, stravaConnected } = useAuth()
   const [state, dispatch] = useReducer(dataReducer, initialDataState)
 
   // Load data from Supabase on auth, reset on sign-out
@@ -78,7 +78,14 @@ export function DataProvider({ children }) {
     dispatch({ type: 'SYNC_START' })
 
     try {
-      const stravaActivities = await fetchActivitiesFromStrava(accessToken)
+      // Auto-refresh token if expired (with 60s buffer)
+      let token = accessToken
+      if (tokenExpiresAt && tokenExpiresAt < Math.floor(Date.now() / 1000) + 60) {
+        token = await refreshStravaToken()
+        if (!token) throw new Error('Failed to refresh Strava token')
+      }
+
+      const stravaActivities = await fetchActivitiesFromStrava(token)
       const merged = mergeActivities(state.activities, stravaActivities)
 
       // Upsert all activities to Supabase
@@ -109,7 +116,7 @@ export function DataProvider({ children }) {
     } catch (err) {
       dispatch({ type: 'SYNC_ERROR', error: err.message })
     }
-  }, [accessToken, userId, state.activities])
+  }, [accessToken, tokenExpiresAt, refreshStravaToken, userId, state.activities])
 
   // Auto-sync on first auth (only if Strava is connected)
   useEffect(() => {
