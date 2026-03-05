@@ -78,45 +78,59 @@ export function DataProvider({ children }) {
     dispatch({ type: 'SYNC_START' })
 
     try {
-      // Auto-refresh token if expired (with 60s buffer), or if we don't know the expiry
+      // Try up to 3 times, refreshing the token on each 401
       let token = accessToken
-      const isExpired = !tokenExpiresAt || tokenExpiresAt < Math.floor(Date.now() / 1000) + 60
-      if (isExpired) {
-        const refreshed = await refreshStravaToken()
-        if (refreshed) token = refreshed
-        // If no refresh token available, fall through and try the existing token
+      let lastError = null
+
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        // Refresh token if expired (with 60s buffer), unknown expiry, or retrying after 401
+        const isExpired = !tokenExpiresAt || tokenExpiresAt < Math.floor(Date.now() / 1000) + 60
+        if (isExpired || attempt > 1) {
+          const refreshed = await refreshStravaToken()
+          if (refreshed) token = refreshed
+        }
+
+        try {
+          const stravaActivities = await fetchActivitiesFromStrava(token)
+          const merged = mergeActivities(state.activities, stravaActivities)
+
+          // Upsert all activities to Supabase
+          const rows = merged.map(a => ({
+            id: a.id,
+            user_id: userId,
+            date: a.date,
+            miles: a.miles,
+            type: a.type,
+            notes: a.notes,
+            source: a.source,
+            moving_time: a.moving_time,
+            elevation_gain: a.elevation_gain,
+            avg_speed: a.avg_speed,
+            max_speed: a.max_speed,
+            avg_heartrate: a.avg_heartrate,
+            max_heartrate: a.max_heartrate,
+            suffer_score: a.suffer_score,
+          }))
+
+          const { error } = await supabase
+            .from('activities')
+            .upsert(rows, { onConflict: 'id' })
+
+          if (error) throw error
+
+          dispatch({ type: 'SYNC_SUCCESS', activities: merged })
+          return
+        } catch (err) {
+          lastError = err
+          // Only retry on 401 (expired/invalid token)
+          if (!err.message?.includes('expired') && !err.message?.includes('Invalid')) break
+          if (attempt === 3) break
+        }
       }
 
-      const stravaActivities = await fetchActivitiesFromStrava(token)
-      const merged = mergeActivities(state.activities, stravaActivities)
-
-      // Upsert all activities to Supabase
-      const rows = merged.map(a => ({
-        id: a.id,
-        user_id: userId,
-        date: a.date,
-        miles: a.miles,
-        type: a.type,
-        notes: a.notes,
-        source: a.source,
-        moving_time: a.moving_time,
-        elevation_gain: a.elevation_gain,
-        avg_speed: a.avg_speed,
-        max_speed: a.max_speed,
-        avg_heartrate: a.avg_heartrate,
-        max_heartrate: a.max_heartrate,
-        suffer_score: a.suffer_score,
-      }))
-
-      const { error } = await supabase
-        .from('activities')
-        .upsert(rows, { onConflict: 'id' })
-
-      if (error) throw error
-
-      dispatch({ type: 'SYNC_SUCCESS', activities: merged })
+      throw lastError
     } catch (err) {
-      dispatch({ type: 'SYNC_ERROR', error: err.message })
+      dispatch({ type: 'SYNC_ERROR', error: `Strava sync failed after retries (${err.message}). Try Reconnect Strava from the menu.` })
     }
   }, [accessToken, tokenExpiresAt, refreshStravaToken, userId, state.activities])
 
