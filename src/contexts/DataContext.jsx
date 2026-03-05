@@ -78,11 +78,13 @@ export function DataProvider({ children }) {
     dispatch({ type: 'SYNC_START' })
 
     try {
-      // Auto-refresh token if expired (with 60s buffer)
+      // Auto-refresh token if expired (with 60s buffer), or if we don't know the expiry
       let token = accessToken
-      if (tokenExpiresAt && tokenExpiresAt < Math.floor(Date.now() / 1000) + 60) {
-        token = await refreshStravaToken()
-        if (!token) throw new Error('Failed to refresh Strava token')
+      const isExpired = !tokenExpiresAt || tokenExpiresAt < Math.floor(Date.now() / 1000) + 60
+      if (isExpired) {
+        const refreshed = await refreshStravaToken()
+        if (refreshed) token = refreshed
+        // If no refresh token available, fall through and try the existing token
       }
 
       const stravaActivities = await fetchActivitiesFromStrava(token)
