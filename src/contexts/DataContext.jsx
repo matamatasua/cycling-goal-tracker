@@ -1,6 +1,6 @@
 import { createContext, useContext, useReducer, useEffect, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
-import { fetchActivitiesFromStrava, mapStravaActivityToOurs, mergeActivities } from '../utils/strava'
+import { fetchActivitiesFromStrava, mergeActivities } from '../utils/strava'
 import { dataReducer, initialDataState } from '../reducers/dataReducer'
 import { useAuth } from './AuthContext'
 
@@ -18,16 +18,7 @@ export function DataProvider({ children }) {
   const { userId, accessToken, tokenExpiresAt, refreshStravaToken, isAuthenticated, stravaConnected } = useAuth()
   const [state, dispatch] = useReducer(dataReducer, initialDataState)
 
-  // Load data from Supabase on auth, reset on sign-out
-  useEffect(() => {
-    if (!isAuthenticated || !userId) {
-      dispatch({ type: 'RESET' })
-      return
-    }
-    loadFromSupabase()
-  }, [isAuthenticated, userId])
-
-  async function loadFromSupabase() {
+  const loadFromSupabase = useCallback(async () => {
     try {
       // Fetch activities
       const { data: activities } = await supabase
@@ -71,7 +62,16 @@ export function DataProvider({ children }) {
       console.error('Failed to load from Supabase:', err)
       dispatch({ type: 'LOAD_DATA' })
     }
-  }
+  }, [userId])
+
+  // Load data from Supabase on auth, reset on sign-out
+  useEffect(() => {
+    if (!isAuthenticated || !userId) {
+      dispatch({ type: 'RESET' })
+      return
+    }
+    loadFromSupabase()
+  }, [isAuthenticated, userId, loadFromSupabase])
 
   const syncStrava = useCallback(async () => {
     if (!accessToken || !userId) return
@@ -139,7 +139,7 @@ export function DataProvider({ children }) {
     if (isAuthenticated && stravaConnected && accessToken && !state.isSyncing && state.activities.length === 0 && !state.loading) {
       syncStrava()
     }
-  }, [isAuthenticated, stravaConnected, accessToken, state.loading])
+  }, [isAuthenticated, stravaConnected, accessToken, state.loading, state.isSyncing, state.activities.length, syncStrava])
 
   const updatePlanDay = useCallback(async (day, value) => {
     dispatch({ type: 'UPDATE_PLAN_DAY', day, value })

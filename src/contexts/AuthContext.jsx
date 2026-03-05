@@ -39,21 +39,6 @@ export function AuthProvider({ children }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Handle Strava OAuth callback
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const code = params.get('code')
-    const state = params.get('state')
-
-    if (!code || state !== 'strava') return
-    if (!session) return // Wait for Supabase session before processing
-
-    // Clear URL and prevent double invocation
-    window.history.replaceState({}, document.title, '/')
-
-    handleStravaCallback(code)
-  }, [session])
-
   async function fetchStravaInfo(userId) {
     try {
       const { data } = await supabase
@@ -72,7 +57,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function handleStravaCallback(code) {
+  const handleStravaCallback = useCallback(async (code) => {
     if (!session) return
 
     try {
@@ -105,7 +90,22 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [session])
+
+  // Handle Strava OAuth callback
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+    const state = params.get('state')
+
+    if (!code || state !== 'strava') return
+    if (!session) return // Wait for Supabase session before processing
+
+    // Clear URL and prevent double invocation
+    window.history.replaceState({}, document.title, '/')
+
+    handleStravaCallback(code)
+  }, [session, handleStravaCallback])
 
   const refreshStravaToken = useCallback(async () => {
     if (!session || !stravaInfo?.strava_refresh_token) return null

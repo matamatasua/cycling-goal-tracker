@@ -40,9 +40,6 @@ export function dataReducer(state, action) {
     case 'SYNC_ERROR':
       return { ...state, isSyncing: false, syncError: action.error }
 
-    case 'UPDATE_WEEKLY_PLAN':
-      return { ...state, weeklyPlan: action.weeklyPlan }
-
     case 'UPDATE_PLAN_DAY':
       return {
         ...state,
@@ -51,9 +48,6 @@ export function dataReducer(state, action) {
           [action.day]: { ...state.weeklyPlan[action.day], ...action.value },
         },
       }
-
-    case 'SET_GOAL':
-      return { ...state, goal: action.goal }
 
     case 'RESET':
       return { ...initialDataState }
