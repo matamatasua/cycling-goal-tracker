@@ -45,13 +45,21 @@ export default function Header() {
             {menuOpen && (
               <div className="header-dropdown glass-panel">
                 {stravaConnected ? (
-                  <button
-                    className="header-dropdown-item"
-                    onClick={() => { syncStrava(); setMenuOpen(false) }}
-                    disabled={isSyncing}
-                  >
-                    {isSyncing ? 'SYNCING...' : 'SYNC STRAVA'}
-                  </button>
+                  <>
+                    <button
+                      className="header-dropdown-item"
+                      onClick={() => { syncStrava(); setMenuOpen(false) }}
+                      disabled={isSyncing}
+                    >
+                      {isSyncing ? 'SYNCING...' : 'SYNC STRAVA'}
+                    </button>
+                    <button
+                      className="header-dropdown-item"
+                      onClick={() => { connectStrava(); setMenuOpen(false) }}
+                    >
+                      RECONNECT STRAVA
+                    </button>
+                  </>
                 ) : (
                   <button
                     className="header-dropdown-item"
