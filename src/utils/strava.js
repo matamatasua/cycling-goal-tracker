@@ -23,7 +23,7 @@ export function mapStravaActivityToOurs(stravaActivity) {
   const metersToFeet = 3.28084
   return {
     id: stravaActivity.id,
-    date: stravaActivity.start_date.split('T')[0],
+    date: (stravaActivity.start_date_local || stravaActivity.start_date).split('T')[0],
     miles: Math.round(stravaActivity.distance * metersToMiles * 10) / 10,
     type: mapActivityType(stravaActivity.sport_type),
     notes: stravaActivity.name || '',
